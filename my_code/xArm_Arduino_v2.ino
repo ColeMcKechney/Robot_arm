@@ -1,4 +1,5 @@
 //updated on FEB-02-2020
+
 #include <LobotServoController.h>
 
 LobotServoController myse(Serial);
@@ -16,11 +17,11 @@ const int FORTH = 3;
 const int FIFTH = 5;
 const int BOTTOM = 2;
 
-const int GRIP_OPEN = 750; //tested success
-const int GRIP_CLOSE = 0; //tested success
+const int GRIP_OPEN = 0; //tested success
+const int GRIP_CLOSE = 750; //tested success
 
-const int NECK_LEFT = 0;
-const int NECK_RITE = 750;
+const int NECK_LEFT = 0; //tested success
+const int NECK_RITE = 750; //tested success
 
 const int THIRD_LEFT = 100; //tested success
 const int THIRD_RITE = 900; //tested success
@@ -33,6 +34,9 @@ const int FIFTH_RITE = 500; //tested success
 
 const int BOTTOM_LEFT = 150; //tested success
 const int BOTTOM_RITE = 925; //tested success
+
+//grip 0 to 750 (0 open),  neck 0 to 750, third 100 to 900, forth 0 to 750, fifth 100 to 500, bottom 150 to 925
+
 
 int MAX_ITER = 3;
 
@@ -52,6 +56,9 @@ int servo_pos[7]; // 1 to 6
 void setup() {
   Serial.begin(9600);
   while (!Serial);
+
+  myse.moveServo(GRIP, (GRIP_CLOSE + GRIP_OPEN) / 2, exec_dely);    delay(norm_dely);
+
   stop_servos();
 }
 //----------------------------------------------------------------------
@@ -61,11 +68,13 @@ void loop() {
 
   if (iteration < MAX_ITER)  {
     //move_grip();
-    rotate_neck();
+    //rotate_neck();
     //move_third();
     //move_forth();
     //move_fifth();
     //rotate_base();
+
+    pick_grasp();
 
     stop_servos();
   }
@@ -76,6 +85,26 @@ void loop() {
   delay(500);
   Serial.flush();
 }
+
+//----------------------------------------------------------------------
+void pick_grasp() {
+
+
+  myse.moveServo(BOTTOM, 537.5 , exec_dely);    delay(norm_dely);
+  myse.moveServo(FIFTH, 470, exec_dely);    delay(norm_dely);
+  myse.moveServo(FORTH, 20, exec_dely);    delay(norm_dely);
+
+  myse.moveServo(GRIP,  GRIP_OPEN, exec_dely);    delay(norm_dely);
+
+  myse.moveServo(THIRD, 300, exec_dely);    delay(norm_dely);
+  myse.moveServo(NECK, (NECK_LEFT + NECK_RITE) / 2, exec_dely);    delay(norm_dely);
+
+  myse.moveServo(GRIP, 600, exec_dely);    delay(norm_dely);
+
+
+  //grip 0 to 750 (0 open),  neck 0 to 750, third 100 to 900, forth 0 to 750, fifth 100 to 500, bottom 150 to 925
+}
+
 //----------------------------------------------------------------------
 void check_positions() {
   send_buf[0] = FRAME_HEADER;
@@ -170,7 +199,7 @@ void rotate_base() {
 }
 //----------------------------------------------------------------------
 void stop_servos() {
-  myse.moveServo(GRIP, (GRIP_CLOSE + GRIP_OPEN) / 2, exec_dely);    delay(norm_dely);
+  //myse.moveServo(GRIP, (GRIP_CLOSE + GRIP_OPEN) / 2, exec_dely);    delay(norm_dely);
   myse.moveServo(NECK, (NECK_LEFT + NECK_RITE) / 2, exec_dely);    delay(norm_dely);
   myse.moveServo(THIRD, (THIRD_LEFT + THIRD_RITE ) / 2, exec_dely);    delay(norm_dely);
   myse.moveServo(FORTH, 390, exec_dely);    delay(norm_dely);
