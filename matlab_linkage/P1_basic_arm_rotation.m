@@ -1,4 +1,4 @@
-function robot_arm_Sumith_v1()
+function P1_basic_arm_rotation()
 clc;clear;
 
 d1 = 4.2;
